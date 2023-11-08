@@ -1,4 +1,10 @@
 # Python-polarion
+[![Build status](https://dev.azure.com/jraemaekers/Python%20Polarion/_apis/build/status/Polarion-Python%20package-CI)](https://dev.azure.com/jraemaekers/Python%20Polarion/_build/latest?definitionId=5)
+![Coverage](https://img.shields.io/azure-devops/coverage/jraemaekers/Python%20Polarion/5)
+![Test](https://img.shields.io/azure-devops/tests/jraemaekers/Python%20Polarion/5)
+[![Documentation Status](https://readthedocs.org/projects/python-polarion/badge/?version=latest)](https://python-polarion.readthedocs.io/en/latest/?badge=latest)
+[![Downloads](https://pepy.tech/badge/polarion)](https://pepy.tech/project/polarion)
+
 
 This package allows the user to access many Polarion items like workitems, test run, plans and documents.
 
@@ -15,8 +21,6 @@ Work with attachments in workitems and test runs.
 Work with custom field in workitems and documents.
 
 # Installation
-
-## From PIP
 
 ```
 pip install polarion
@@ -122,8 +126,10 @@ The API does not allow access to the project administration.
 
 The package uses; requests, urllib3 and zeep.
 
-It is tested for Python version 3.6 through 3.10.
+It is tested for Python version 3.7 through 3.12.
+Python 3.6 support has been dropped in 1.3.0.
 
 # Known issues or missing features
 - No way of knowing the test run possible statuses.
+- Deleting work items used in documents does not remove the reference from the document.
 

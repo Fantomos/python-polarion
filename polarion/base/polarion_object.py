@@ -2,8 +2,8 @@ class PolarionObject(object):
     def __init__(self, polarion, project, id=None, uri=None):
         self._polarion = polarion
         self._project = project
-        self._id = id  # the id of the object is normally set on the _buildWorkitemFromPolarion method
-        self._uri = uri  # the uri of the object is normally set on the _buildWorkitemFromPolarion method
+        self._id = id
+        self._uri = uri
 
     def _reloadFromPolarion(self):
         raise NotImplementedError
@@ -20,3 +20,4 @@ class PolarionObject(object):
             return self._uri
         else:
             super().__getattribute__(name)
+

@@ -70,8 +70,8 @@ class Workitem(CustomFields, Comments):
                     self._project.id, self.id)
             except Exception as e:
                 raise PolarionAccessError(
-                    f'Cannot find workitem "{self.id}" in project "{self._project.id}"'
-                    f' on server "{self._polarion.polarion_url}"')
+                    f'Error loading workitem "{self.id}" in project "{self._project.id}"'
+                    f' on server "{self._polarion.polarion_url}":\n{e}')
         elif new_workitem_type is not None:
             if self._project is None:
                 raise PolarionAccessError(f'Provide a project when creating a workitem from an id')
@@ -214,7 +214,8 @@ class Workitem(CustomFields, Comments):
         assigned_users = []
         if self.assignee is not None:
             for user in self.assignee.User:
-                assigned_users.append(User(self._polarion, user))
+                if user is not None and user.unresolvable is False:
+                    assigned_users.append(User(self._polarion, user))
         return assigned_users
 
     def removeAssignee(self, user: User):
@@ -644,7 +645,7 @@ class Workitem(CustomFields, Comments):
         :param attachment_id: Returns the dictionary with the attachment info
         :type attachment_id: str
         :return: AttachmentInfo
-        :rtype:
+        :rtype: AttachmentInfo or None
         """
         if self.hasAttachment():
             for attachment in self.getAttachments():
@@ -728,6 +729,27 @@ class Workitem(CustomFields, Comments):
         service = self._polarion.getService('Tracker')
         service.updateAttachment(self.uri, id, file_name, title, data)
         self._reloadFromPolarion()
+
+    def getProject(self):
+        """
+        Get the project object
+
+        :return: Project object
+        :rtype: Project
+        """
+        return self._polarion.getProject(self.project.id)
+
+    def getDocument(self):
+        """
+        Get the document object
+
+        :return: Document object
+        :rtype: Document
+        """
+        if self.document is not None:
+            proj = self.getProject()
+            return proj.getDocument(self.document)
+        return None
 
     def delete(self):
         """

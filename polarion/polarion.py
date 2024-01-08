@@ -4,7 +4,7 @@ from urllib.parse import urljoin, urlparse
 import requests
 import tempfile
 import os
-from zeep import Client, CachingClient
+from zeep import Client, CachingClient, Transport
 from zeep.plugins import HistoryPlugin
 
 from .project import Project
@@ -124,10 +124,9 @@ class Polarion(object):
     def get_client(self,service,plugins=[]):
         client = None
         if self.cache:
-            client = CachingClient(self.services[service]['url'] + '?wsdl', plugins=plugins)
+            client = CachingClient(self.services[service]['url'] + '?wsdl', plugins=plugins, transport=self._getTransport())
         else:
-            client = Client(self.services[service]['url'] + '?wsdl', plugins=plugins)
-        client.transport.session.verify = self.verify_certificate
+            client = Client(self.services[service]['url'] + '?wsdl', plugins=plugins, transport=self._getTransport())
         return client
 
     def _updateServices(self):
@@ -165,7 +164,15 @@ class Polarion(object):
             if service == 'TestManagement':
                 self.services[service]['client'].service.setTestSteps._proxy._binding.get(
                     'setTestSteps').input.body.type._element[1].min_occurs = 0
-
+                
+    def _getTransport(self):
+        """
+        Gets the zeep transport object
+        """
+        transport = Transport(session=self.request_session)
+        transport.session.verify = self.verify_certificate
+        return transport
+    
     def _getTypes(self):
         # TODO: check if the namespace is always the same
         self.EnumOptionIdType = self.getTypeFromService('TestManagement', 'ns3:EnumOptionId')
